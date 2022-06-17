@@ -1,4 +1,17 @@
 body {
   font-family: sans-serif, arial;
+  margin: 100px;
+  background-color:beige
 }
 
+.entry{
+  padding-right: 40%;
+}
+
+.normalbutton{
+  margin-left:20px;
+}
+
+.toggle{
+  margin-left: 50px;
+}
