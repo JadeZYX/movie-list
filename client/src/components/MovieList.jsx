@@ -12,7 +12,6 @@ var MovieList = (props)=>{
           movie={ele}
           key={index}
           id={index}
-          handleClickEntry={props.handleClickEntry}
           handleToggleClick={props.handleToggleClick}
          />
         ))

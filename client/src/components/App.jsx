@@ -1,74 +1,70 @@
 import React from 'react';
 import MovieList from './MovieList.jsx';
 import Form from './Form.jsx';
+import axios from 'axios';
+
+//pass in this initial configuration and object
+const api=axios.create({
+  baseURL:'http://localhost:5000'
+});
 
 
-
-class App extends React.Component{
-  constructor(props){
+class App extends React.Component {
+  constructor(props) {
     super(props);
-    this.state={
-      selectedText:'',
-      showSearched: true,
-      showWatched: false,
-      showToWatch: true,
-      movies:[
-        {title: 'Mean Girls', isWatched: false},
-        {title: 'Hackers', isWatched: false},
-        {title: 'The Grey', isWatched: false},
-        {title: 'Sunshine', isWatched: false},
-        {title: 'Ex Machina', isWatched: false},
-      ]
-   };
-   this.handleClickAdd=this.handleClickAdd.bind(this);
-   this.handleClickGoInput=this.handleClickGoInput.bind(this);
-   this.filterMovieData=this.filterMovieData.bind(this);
-   this.handleToggleClick=this.handleToggleClick.bind(this);
-   this.filterToWatch=this.filterToWatch.bind(this);
-   this.filterWatched=this.filterWatched.bind(this);
-
-  }
-
-
-  handleClickAdd(movieName){
-   let duplicated = false;
-   this.state.movies.forEach(ele=>{
-     if(ele.title===movieName){
-       duplicated=true;
-     }
-   })
-   if(!duplicated){
-    this.setState({
-      movies:[...this.state.movies, {title: movieName}],
-      selectedText: ''
+    api.get('/aaa').then(res=>{
+     console.log(res.data);
     })
-   }
+    this.state = {
+      selectedText: '',
+      // addedText:'',
+      showAll: true,
+      showWatched: false,
+      showToWatch: false,
+      // showAdded:false;
+      movies: [
+        { title: 'Mean Girls', isWatched: false },
+        { title: 'Hackers', isWatched: false },
+        { title: 'The Grey', isWatched: false },
+        { title: 'Sunshine', isWatched: false },
+        { title: 'Ex Machina', isWatched: false },
+      ]
+    };
+    this.handleClickAdd = this.handleClickAdd.bind(this);
+    this.handleClickGoInput = this.handleClickGoInput.bind(this);
+    this.filterMovieData = this.filterMovieData.bind(this);
+    this.handleToggleClick = this.handleToggleClick.bind(this);
+    this.filterToWatch = this.filterToWatch.bind(this);
+    this.filterWatched = this.filterWatched.bind(this);
   }
 
-  handleToggleClick(index){
+
+  handleClickAdd(movieName) {
+    if (movieName === '') return;
+    let duplicated = false;
+    this.state.movies.forEach(ele => {
+      if (ele.title === movieName) {
+        duplicated = true;
+      }
+    })
+    if (!duplicated) {
+      this.setState({
+        movies: [...this.state.movies, { title: movieName }],
+        selectedText: ''
+      })
+    }
+  }
+
+  handleToggleClick(index) {
     let newMovies = [...this.state.movies];
-     newMovies[index].isWatched = !newMovies[index].isWatched;
+    newMovies[index].isWatched = !newMovies[index].isWatched;
     this.setState({
-      movies:newMovies
+      movies: newMovies
     });
   }
 
-  filterMovieData(){
-    /*const filteredList =
-    this.state.movies.filter(ele=>{
-      if(this.state.selectedText===''){
-        return true;
-      }
-      else{
-        if(ele.title.toLowerCase().includes(this.state.selectedText)){
-          return true;
-        }
-
-        return false;
-      }
-    })*/
-
-    if (this.state.showSearched) {
+  filterMovieData() {
+    if (this.state.showAll) {
       return this.state.movies.filter(ele =>
         ele.title.toLowerCase().includes(this.state.selectedText));
     }
@@ -81,34 +77,49 @@ class App extends React.Component{
       return this.state.movies.filter(ele => ele.isWatched == false);
     }
   }
-  handleClickGoInput(text){
-    this.setState({selectedText:text, showSearched:true});
+  handleClickGoInput(text) {
+    this.setState({
+      selectedText: text,
+      showAll: true,
+      showToWatch: false,
+      showWatched: false
+    });
   }
 
-  filterWatched(){
-    this.setState({showWatched: true, showSearched: false});
+  filterWatched() {
+    this.setState({
+      selectedText: '',
+      showAll: false,
+      showToWatch: false,
+      showWatched: true
+    });
   }
-  filterToWatch(){
-    this.setState({showWatched: false, showSearched: false});
+  filterToWatch() {
+    this.setState({
+      selectedText:'',
+      showAll:false,
+      showToWatch:true,
+      showWatched:false
+    });
   }
 
-  render(){
+  render() {
     return (
       <div>
         <div>{"MovieList"}</div>
         <br></br>
         <Form
-        handleClickGoInput={this.handleClickGoInput}
-        handleClickAdd={this.handleClickAdd}
-        filterMovieData={this.filterMovieData}
-        filterToWatch={this.filterToWatch}
-        filterWatched={this.filterWatched}
+          handleClickGoInput={this.handleClickGoInput}
+          filterMovieData={this.filterMovieData}
+          filterToWatch={this.filterToWatch}
+          filterWatched={this.filterWatched}
+          handleClickAdd={this.handleClickAdd}
         />
         <div>
           <MovieList
-          movieslist={this.filterMovieData()}
-          handleToggleClick={this.handleToggleClick}
-         />
+            movieslist={this.filterMovieData()}
+            handleToggleClick={this.handleToggleClick}
+          />
         </div>
       </div>
     );
